@@ -13,9 +13,8 @@ class FileProcessor:
         :return: 统计结果
         """
         char_sum = 0
-        print(filename)
         if filename and os.path.exists(filename):
-            with open(filename, 'rb') as f:
+            with open(filename, 'r', encoding='utf-8') as f:
                 while True:
                     line = f.readline()
                     if not line:
@@ -56,7 +55,7 @@ class FileProcessor:
         """
         line_sum = 0
         if filename and os.path.exists(filename):
-            with open(filename, 'rb') as f:
+            with open(filename, 'r', encoding='utf-8') as f:
                 while True:
                     line = f.readline()
                     if not line:
@@ -105,7 +104,7 @@ class FileProcessor:
 
         is_comment_block = False  # 用来标识代码是否为多行注释块
         if os.path.exists(filename):
-            with open(filename, 'r', encoding='UTF-8') as f:
+            with open(filename, 'r', encoding='utf-8') as f:
                 while True:
                     line = f.readline()
                     if not line:
@@ -121,8 +120,8 @@ class FileProcessor:
                     # 2. 多行注释符在同一行的情况
                     # 3. 多行注释符之间的行数
                     elif line.startswith("#") or \
-                            (line.startswith('"""') and line.endswith('"""')) or \
-                            (line.startswith("'''") and line.endswith("'''")) or \
+                            (line.startswith('"""') and line.endswith('"""') and len(line) > 3) or \
+                            (line.startswith("'''") and line.endswith("'''") and len(line) > 3) or \
                             (is_comment_block and not (line.endswith('"""') or line.endswith("'''"))):
                         comment_line += 1
                     # 4. 多行注释符的开始行和结束行
@@ -132,5 +131,4 @@ class FileProcessor:
                         comment_line += 1
                     else:
                         code_line += 1
-
         return code_line, blank_line, comment_line

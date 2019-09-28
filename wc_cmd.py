@@ -1,5 +1,5 @@
 import argparse
-import gui
+import wc_gui
 import file_processor as fp
 
 
@@ -24,14 +24,18 @@ args = parser.parse_args()
 
 def main():
     # filename = r"C:\Users\ace87\Desktop\wc.txt"
-    print(args)
+    # print(args)  # 输出参数的解析
     if args.gui:
-        gui.wc_gui()
+        wc_gui.gui()
 
     if not args.filename:
-        print('未输入文件路径')
-    elif args.s is not None:
-        list_file = fp.FileProcessor.recursive_directory(args.filename, args.s)
+        print('请检查输入的文件路径是否正确')
+    else:
+        list_file = list()
+        if args.s is not None:
+            list_file = fp.FileProcessor.recursive_directory(args.filename, args.s)
+        else:
+            list_file.append(args.filename)
         for i in range(len(list_file)):
             print('文件路径：', list_file[i])
             if args.char:
@@ -48,22 +52,6 @@ def main():
                 print('代码行数：', code_line)
                 print('空白行数：', blank_line)
                 print('注释行数：', comment_line)
-    else:
-        print('文件路径：', args.filename)
-        if args.char:
-            char_sum = fp.FileProcessor.calculate_char_sum(args.filename)
-            print('字符数：', char_sum)
-        if args.word:
-            word_sum = fp.FileProcessor.calculate_word_sum(args.filename)
-            print('单词数：', word_sum)
-        if args.line:
-            line_sum = fp.FileProcessor.calculate_line_sum(args.filename)
-            print('行数：', line_sum)
-        if args.another:
-            code_line, blank_line, comment_line = fp.FileProcessor.calculate_another_sum(args.filename)
-            print('代码行数：', code_line)
-            print('空白行数：', blank_line)
-            print('注释行数：', comment_line)
 
 
 if __name__ == '__main__':

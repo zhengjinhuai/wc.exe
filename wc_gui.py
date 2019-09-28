@@ -1,9 +1,7 @@
 import sys
-import PyQt5
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication,
                              QMessageBox, QLineEdit, QTextEdit,
-                             QLabel, QGridLayout, QCheckBox,
-                             QListWidget, QFileDialog)
+                             QLabel, QGridLayout, QCheckBox, QFileDialog)
 from PyQt5.QtCore import Qt
 import file_processor as fp
 
@@ -14,7 +12,7 @@ class WCExample(QWidget):
         self.init_ui()
 
     def init_ui(self):
-
+        """初始化界面"""
         self.calculate_button = QPushButton("统计结果", self)
         self.cancel_button = QPushButton("清空界面", self)
 
@@ -70,11 +68,14 @@ class WCExample(QWidget):
             event.ignore()
 
     def get_file_path(self):
+        """选择文件"""
         file_path, file_type = QFileDialog.getOpenFileName(self, "选择文件")
         self.filename_edit.clear()
         self.filename_edit.setText(file_path)
 
     def calculate_results(self):
+        """统计最终结果"""
+        list_file = list()  # 选择的文件列表
         choose_file = self.filename_edit.text()
         select_char = self.char_box.isChecked()
         select_word = self.word_box.isChecked()
@@ -82,11 +83,16 @@ class WCExample(QWidget):
         select_more = self.more_box.isChecked()
         select_find = self.find_box.isChecked()
         if not choose_file:
-            print('None')
-        elif select_find:
-            source_file = self.filename_edit.text()
-            glob_file = self.glob_edit.text()
-            list_file = fp.FileProcessor.recursive_directory(source_file, glob_file)
+            print('请检查输入的文件路径是否正确')
+        else:
+            if select_find:
+                source_file = self.filename_edit.text()
+                glob_file = self.glob_edit.text()
+                list_file = fp.FileProcessor.recursive_directory(source_file, glob_file)
+            else:
+                list_file.clear()
+                list_file.append(choose_file)
+
             for i in range(len(list_file)):
                 self.result_edit.append('文件路径：' + list_file[i])
                 if select_char:
@@ -103,35 +109,20 @@ class WCExample(QWidget):
                     self.result_edit.append('代码行数为：' + str(code_line))
                     self.result_edit.append('空白行数为：' + str(blank_line))
                     self.result_edit.append('注释行数为：' + str(comment_line))
-        else:
-            self.result_edit.append('文件路径: ' + choose_file)
-            if select_char:
-                char_sum = fp.FileProcessor.calculate_char_sum(choose_file)
-                self.result_edit.append('字符数为：' + str(char_sum))
-            if select_word:
-                word_sum = fp.FileProcessor.calculate_word_sum(choose_file)
-                self.result_edit.append('单词数为：' + str(word_sum))
-            if select_line:
-                line_sum = fp.FileProcessor.calculate_line_sum(choose_file)
-                self.result_edit.append('总行数为：' + str(line_sum))
-            if select_more:
-                code_line, blank_line, comment_line = fp.FileProcessor.calculate_another_sum(choose_file)
-                self.result_edit.append('代码行数为：' + str(code_line))
-                self.result_edit.append('空白行数为：' + str(blank_line))
-                self.result_edit.append('注释行数为：' + str(comment_line))
 
     def clear_all(self):
+        """清空界面"""
         self.filename_edit.clear()
         self.glob_edit.clear()
         self.result_edit.clear()
 
 
-def wc_gui():
+def gui():
     app = QApplication(sys.argv)
-    gui = WCExample()
-    gui.show()
+    wc_example = WCExample()
+    wc_example.show()
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-    wc_gui()
+    gui()
